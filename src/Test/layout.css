@@ -1,0 +1,49 @@
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+  body {
+      background-color: #F5FFFA; 
+  }
+  .darkMode {
+      background-color: #001315;
+      color: #F0FFFF;
+  }
+  .sideBar {
+    overflow: hidden;
+    background-color: #F5FFFA;
+    position: relative;
+    color: #001315;
+    width: 10%;
+  }
+  .sideBar #barLinks {
+    display: none;
+  }
+  .sideBar #barIcons {
+      
+  }
+  .sideBar a {
+    color: black;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 0.8vw;
+    display: block;
+  }
+  
+  .sideBar a.icon {
+    background: #F5FFFA;
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  
+  .sideBar a:hover {
+    background-color: #f2f8fb;
+    color: black;
+  }
+  
+  .active {
+    background-color: #F5FFFA;
+    color: white;
+
+  }
