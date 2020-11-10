@@ -1,28 +1,30 @@
-body {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-  }
+:root {
+  --main-background-colour: #F5FFFA;
+  --main-text-colour: #001315;
+  --main-side-bar-width: 10%;
+  --main-body-width: 40%;
+}
   body {
-      background-color: #F5FFFA; 
+      -family: Verdana, Geneva, Tahoma, sans-serif;
+      background-color: var(--main-background-colour);
+      color: var(--main-text-colour) 
   }
   .darkMode {
-      background-color: #001315;
-      color: #F0FFFF;
+    --main-background-colour: #001315;
+    --main-text-colour: #F5FFFA;
   }
   .sideBar {
     overflow: hidden;
-    background-color: #F5FFFA;
+    background-color: var(--main-background-colour);
     position: relative;
-    color: #001315;
-    width: 10%;
+    color: var(--main-text-colour);
+    width: var(--main-aside-width);
   }
   .sideBar #barLinks {
     display: none;
   }
-  .sideBar #barIcons {
-      
-  }
   .sideBar a {
-    color: black;
+    color: var(--main-text-colour);
     padding: 14px 16px;
     text-decoration: none;
     font-size: 0.8vw;
@@ -30,7 +32,7 @@ body {
   }
   
   .sideBar a.icon {
-    background: #F5FFFA;
+    background: var(--main-background-colour);
     display: block;
     position: absolute;
     left: 0;
@@ -43,7 +45,77 @@ body {
   }
   
   .active {
-    background-color: #F5FFFA;
+    background-color: var(--main-background-colour);
     color: white;
 
+  }
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+  
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+  .positionSlider {
+    display: inline-block;
+  }
+  .searchBar {
+    position: absolute;
+    left: 250px;
+    top: 20px;
+    width: var(--main-body-width);
+    height: 2.5%;
+  }
+  #searchBar {
+    background-color: var(--main-background-colour);
   }
