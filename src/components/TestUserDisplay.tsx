@@ -1,6 +1,8 @@
 import { User } from "../schemas";
 import React from "react";
 import TestUserDisplayUser from "./TestUserDisplayUser";
+import CreateUserTest from "./CreateUserTest";
+import UploadAvatarTest from "./UploadAvatarTest";
 
 export interface TestUserDisplayProps {}
 
@@ -14,8 +16,8 @@ class TestUserDisplay extends React.Component<
 > {
   state = { users: [] };
 
-  componentDidMount() {
-    fetch("/mytest")
+  componentDidMount = () => {
+    fetch("/api/user")
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -32,9 +34,11 @@ class TestUserDisplay extends React.Component<
         <h2>Displays all the users on the database:</h2>
         <div style={{margin: '10px 10px'}}>
           {this.state.users.map((item: User) => (
-            <TestUserDisplayUser user={item} />
+            <TestUserDisplayUser user={item} deleteEvent={this.componentDidMount} />
           ))}
         </div>
+        <CreateUserTest submitEvent={this.componentDidMount}/>
+        <UploadAvatarTest />
       </div>
     );
   }

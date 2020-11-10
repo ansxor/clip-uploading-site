@@ -11,6 +11,11 @@ export interface UserRegister {
     avatarURL: string,
 }
 
+export interface UserAvatarChange {
+    id: string,
+    avatarURL: string
+}
+
 export interface UserLogin {
     user: User,
     password: string,

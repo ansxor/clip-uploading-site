@@ -1,93 +1,70 @@
-import React from "react";
+import React, { ChangeEvent, FormEvent } from "react";
 import { UserRegister, User } from "../schemas";
 
-export interface CreateUserTestProps {}
+export interface CreateUserTestProps {
+  submitEvent?: Function;
+}
 
-export interface CreateUserTestState {}
+export interface CreateUserTestState {
+  username: string;
+}
 
 class CreateUserTest extends React.Component<
   CreateUserTestProps,
   CreateUserTestState
 > {
-  usernameInput: React.RefObject<HTMLInputElement>;
-  avatarFileInput: React.RefObject<HTMLInputElement>;
-  outputTextarea: React.RefObject<HTMLTextAreaElement>;
-
+  state = { username: "" };
   constructor(props: CreateUserTestProps) {
     super(props);
     this.submitUserInfo = this.submitUserInfo.bind(this);
-    this.usernameInput = React.createRef<HTMLInputElement>();
-    this.avatarFileInput = React.createRef<HTMLInputElement>();
-    this.outputTextarea = React.createRef<HTMLTextAreaElement>();
+    this.handleUsernameInput = this.handleUsernameInput.bind(this);
   }
 
-  submitUserInfo() {
-    if (this.usernameInput.current!.value !== "") {
+  handleUsernameInput(event: ChangeEvent<HTMLInputElement>) {
+    this.setState({ username: event.target.value });
+  }
+
+  private submitUserInfo(event: FormEvent<HTMLFormElement>) {
+    let { username } = this.state;
+    if (username !== "") {
       let newUser: UserRegister = {
-        username: this.usernameInput.current!.value,
+        username: username,
         avatarURL: "avatar/default.png",
       };
-      fetch("/registeruser", {
+      fetch("/api/user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newUser),
       })
-        .then(res => res.json())
+        .then((res) => res.json())
         .then((registeredUser: User) => {
-          console.log(registeredUser) 
-          if (this.avatarFileInput.current!.files !== null) {
-            let formData = new FormData()
-            formData.append('image', this.avatarFileInput.current!.files![0])
-            fetch('/uploadavatar', {
-              method: 'POST',
-              body: formData 
-            })
-            .then(res => res.json())
-            .then((data: any) => {
-              console.log(data.name)
-              registeredUser.avatarURL = data.name
-              fetch('/updateuser', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(registeredUser)
-              })
-                .then(res => console.log(res))
-                .catch(err => {console.log(':(');console.error(err)}) 
-            })
-            .catch(err => console.error(err)) 
-          }
-          else
-            console.log('no avatar available')
+          console.log(registeredUser);
         })
-        .catch((err) => console.error(err))
+        .catch((err) => console.error(err));
+    } else {
+      console.log("there's no username????");
     }
-    else {
-      console.log("there's no username????")
+    if (this.props.submitEvent) {
+      this.props.submitEvent();
     }
+    this.setState({username: ""})
+
+    event.preventDefault();
   }
 
   render() {
     return (
-      <>
+      <div>
         <form onSubmit={this.submitUserInfo}>
           <label>
             Username:
-            <input type="text" ref={this.usernameInput} />
+            <input type="text" value={this.state.username} onChange={this.handleUsernameInput} />
           </label>
-          <br />
-          <label>
-            Avatar:
-            <input type="file" ref={this.avatarFileInput} />
-          </label>
-          <br />
           <input type="submit" value="Submit" />
         </form>
-        <textarea readOnly ref={this.outputTextarea}></textarea>
-      </>
+      </div>
     );
   }
 }
