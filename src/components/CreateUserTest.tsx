@@ -1,6 +1,5 @@
 import React from "react";
-import TestUserDisplay from "./TestUserDisplay";
-import { User } from "../schemas";
+import { UserRegister, User } from "../schemas";
 
 export interface CreateUserTestProps {}
 
@@ -23,8 +22,8 @@ class CreateUserTest extends React.Component<
   }
 
   submitUserInfo() {
-    if (this.usernameInput.current) {
-      let newUser: User = {
+    if (this.usernameInput.current!.value !== "") {
+      let newUser: UserRegister = {
         username: this.usernameInput.current!.value,
         avatarURL: "avatar/default.png",
       };
@@ -35,8 +34,39 @@ class CreateUserTest extends React.Component<
         },
         body: JSON.stringify(newUser),
       })
-        .then((res) => this.outputTextarea.current!.value += res)
-        .catch((err) => this.outputTextarea.current!.value += err)
+        .then(res => res.json())
+        .then((registeredUser: User) => {
+          console.log(registeredUser) 
+          if (this.avatarFileInput.current!.files !== null) {
+            let formData = new FormData()
+            formData.append('image', this.avatarFileInput.current!.files![0])
+            fetch('/uploadavatar', {
+              method: 'POST',
+              body: formData 
+            })
+            .then(res => res.json())
+            .then((data: any) => {
+              console.log(data.name)
+              registeredUser.avatarURL = data.name
+              fetch('/updateuser', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(registeredUser)
+              })
+                .then(res => console.log(res))
+                .catch(err => {console.log(':(');console.error(err)}) 
+            })
+            .catch(err => console.error(err)) 
+          }
+          else
+            console.log('no avatar available')
+        })
+        .catch((err) => console.error(err))
+    }
+    else {
+      console.log("there's no username????")
     }
   }
 
@@ -57,7 +87,6 @@ class CreateUserTest extends React.Component<
           <input type="submit" value="Submit" />
         </form>
         <textarea readOnly ref={this.outputTextarea}></textarea>
-        <TestUserDisplay />
       </>
     );
   }

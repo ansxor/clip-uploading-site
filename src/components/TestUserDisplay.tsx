@@ -32,7 +32,7 @@ class TestUserDisplay extends React.Component<
         <h2>Displays all the users on the database:</h2>
         <div style={{margin: '10px 10px'}}>
           {this.state.users.map((item: User) => (
-            <TestUserDisplayUser key={item._id} user={item} />
+            <TestUserDisplayUser user={item} />
           ))}
         </div>
       </div>

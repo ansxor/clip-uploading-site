@@ -1,9 +1,14 @@
 export interface User {
     username: string,
     avatarURL: string,
+    id: string
     description?: string,
     links?: string[],
-    _id?: string
+}
+
+export interface UserRegister {
+    username: string,
+    avatarURL: string,
 }
 
 export interface UserLogin {

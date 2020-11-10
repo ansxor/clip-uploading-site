@@ -11,9 +11,9 @@ export interface TestUserDisplayUserState {
  
 class TestUserDisplayUser extends React.Component<TestUserDisplayUserProps, TestUserDisplayUserState> {
     render() { 
-        const { _id, avatarURL, username } = this.props.user;
+        const { id, avatarURL, username } = this.props.user;
         return ( 
-            <li key={_id}> 
+            <li key={id}> 
                 <img src={avatarURL} alt="Avatar" style={{width: 32, height: 'auto'}}/> 
                 {username}
             </li>
