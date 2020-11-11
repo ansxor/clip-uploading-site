@@ -3,6 +3,7 @@ const express = require("express");
 const MongoClient = require("mongodb").MongoClient;
 const multer = require("multer");
 const fs = require("fs");
+const cors = require('cors')
 
 const app = express();
 const upload = multer({
@@ -22,22 +23,22 @@ MongoClient.connect(url, { useUnifiedTopology: true })
   .then((client) => {
     let db = client.db(dbName);
     app.post("/api/user", (req, res) => {
-      req.body.id = uuid();
-      db.collection("users").insertOne(req.body).then();
-      res.json(req.body);
+      req.body.id = uuid()
+      db.collection("users").insertOne(req.body)
+        .then(doc => res.status(200).json(doc))
+        .catch(err => res.status(401).json(err))
     });
     app.get("/api/user", (req, res) => {
-      db.collection("users")
-        .find(req.body)
+     db.collection("users")
+        .find(req.query)
         .toArray()
-        .then((result) => res.json(result))
+        .then((result) => { result.map(r=>r._id=undefined); res.json(result)})
         .catch((err) => console.log(err));
     });
     app.delete("/api/user", (req, res) => {
-      let { id } = req.body;
-      db.collection("users").findOneAndDelete({ id: id }, (err, docs) => {
-        res.status(200).json({ result: "Success!" });
-      });
+      db.collection("users").findOneAndDelete({id: req.query.id})
+        .then(doc => res.status(200).json(doc))
+        .catch(err => res.status(404).json(err))
     });
     app.put("/api/user", (req, res) => {
       let user = db
@@ -46,16 +47,20 @@ MongoClient.connect(url, { useUnifiedTopology: true })
       res.json(user);
     });
     app.post("/api/uploadavatar", upload.single("image"), (req, res) => {
+      console.log(req.body)
       if (req.file !== undefined) {
-        const filename = uuid();
+        const filename = `${uuid()}.png`;
         fs.writeFileSync(
           `${__dirname}/public/avatar/${filename}`,
           req.file.buffer
         );
-        return res.status(200).json({ name: filename });
+        let newUserInfo = { avatarURL: `avatar/${filename}`}
+        db.collection('users').findOneAndUpdate({id: req.body.id}, { $set: newUserInfo }, {new: true})
+          .then(doc => res.status(200).json(doc))
+          .catch(err => res.status(404).json(err))
       } else {
         console.log("AAAAAAAAAAAAA");
-        return res.status(401).json({ error: "Please provide an image" });
+        return res.status(400).json({ error: "Please provide an image" });
       }
     });
     app.listen(port, () => console.log("listening"));

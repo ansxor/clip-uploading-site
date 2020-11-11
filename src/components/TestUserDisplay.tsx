@@ -32,13 +32,13 @@ class TestUserDisplay extends React.Component<
     return (
       <div>
         <h2>Displays all the users on the database:</h2>
-        <div style={{margin: '10px 10px'}}>
+        <ul style={{margin: '10px 10px'}}>
           {this.state.users.map((item: User) => (
             <TestUserDisplayUser user={item} deleteEvent={this.componentDidMount} />
           ))}
-        </div>
+        </ul>
         <CreateUserTest submitEvent={this.componentDidMount}/>
-        <UploadAvatarTest />
+        <UploadAvatarTest submitEvent={this.componentDidMount} />
       </div>
     );
   }
