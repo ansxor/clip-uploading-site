@@ -41,7 +41,8 @@ class UploadAvatarTest extends React.Component<
           method: 'POST',
           body: formData
       })
-        .then(res => console.log(res))
+        .then(res => res.json())
+        .then(data => console.log(data))
         .catch(err => console.error(err))
       if (this.props.submitEvent !== undefined) {
         this.props.submitEvent()
