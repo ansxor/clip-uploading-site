@@ -7,6 +7,11 @@ export interface User {
     _id?: string
 }
 
+export interface UserIdentity {
+    id: string,
+    password: string
+}
+
 export interface UserLogin {
     user: User,
     password: string,

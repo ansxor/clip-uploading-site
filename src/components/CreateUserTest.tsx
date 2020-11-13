@@ -1,5 +1,5 @@
 import React, { ChangeEvent, FormEvent } from "react";
-import { UserRegister, User } from "../schemas";
+import { User } from "../schemas";
 
 export interface CreateUserTestProps {
   submitEvent?: Function;
@@ -7,36 +7,38 @@ export interface CreateUserTestProps {
 
 export interface CreateUserTestState {
   username: string;
+  password: string;
 }
 
 class CreateUserTest extends React.Component<
   CreateUserTestProps,
   CreateUserTestState
 > {
-  state = { username: "" };
+  state = { username: "", password: "" };
   constructor(props: CreateUserTestProps) {
     super(props);
     this.submitUserInfo = this.submitUserInfo.bind(this);
     this.handleUsernameInput = this.handleUsernameInput.bind(this);
+    this.handlePasswordInput = this.handlePasswordInput.bind(this);
   }
 
   handleUsernameInput(event: ChangeEvent<HTMLInputElement>) {
     this.setState({ username: event.target.value });
   }
 
+  handlePasswordInput(event: ChangeEvent<HTMLInputElement>) {
+    this.setState({ password: event.target.value });
+  }
+
+
   private submitUserInfo(event: FormEvent<HTMLFormElement>) {
-    let { username } = this.state;
-    if (username !== "") {
-      let newUser: UserRegister = {
-        username: username,
-        avatarURL: "avatar/default.png",
-      };
-      fetch("/api/user", {
+    let { username, password } = this.state;
+    if (username !== "" && password !== "") {
+      const formData = new URLSearchParams()
+      formData.append("username", username)
+      formData.append("password", password)
+      fetch(`/api/register?${formData.toString()}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newUser),
       })
         .then((res) => res.json())
         .then((registeredUser: User) => {
@@ -49,7 +51,7 @@ class CreateUserTest extends React.Component<
     if (this.props.submitEvent) {
       this.props.submitEvent();
     }
-    this.setState({username: ""})
+    this.setState({username: "", password: ""})
 
     event.preventDefault();
   }
@@ -62,7 +64,11 @@ class CreateUserTest extends React.Component<
             Username:
             <input type="text" value={this.state.username} onChange={this.handleUsernameInput} />
           </label>
-          <input type="submit" value="Submit" />
+          <label>
+            Password:
+            <input type="text" value={this.state.password} onChange={this.handlePasswordInput} />
+          </label>
+         <input type="submit" value="Submit" />
         </form>
       </div>
     );

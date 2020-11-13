@@ -8,7 +8,7 @@ export interface User {
 
 export interface UserRegister {
     username: string,
-    avatarURL: string,
+    password: string,
 }
 
 export interface UserAvatarChange {

@@ -60,18 +60,57 @@ MongoClient.connect(url, { useUnifiedTopology: true })
     });
 
     app.post("/api/login", (req, res) => {
-      db.collection("users")
-        .findOne({ id: req.query.id })
-        .then((doc) => {
-          const token = jwt.sign({ uid: doc.id }, TOKEN_SECRET, {
-            expiresIn: "1800s",
+      if (req.query.username !== undefined && req.query.password !== undefined) {
+        db.collection("users")
+          .findOne({ username: req.query.username })
+          .then((user) => {
+            db.collection("user-identities")
+              .findOne({id: user.id})
+              .then((uauth) => {
+                if (req.query.password === uauth.password) {
+                  const token = jwt.sign({ uid: user.id }, TOKEN_SECRET, {
+                   expiresIn: "1800s",
+                 });
+                 res.status(200).json({token: token})
+                }
+                else {
+                  res.sendStatus(400)
+                }
+    
+              })
+              .catch(err => req.status(500).json(err))
+          })
+          .catch((err) => {
+            res.status(404).json(err);
           });
-          res.status(200).json({ token: token });
-        })
-        .catch((err) => {
-          res.status(404).json(err);
-        });
-    });
+      }
+   });
+
+    app.post("/api/register", (req, res) => {
+      if (req.query.username !== undefined && req.query.password !== undefined) {
+        const newUser = {
+          username: req.query.username,
+          avatarURL: "avatar/default.png",
+          id: uuid()
+        }
+        const newUserIdentity = {
+          id: newUser.id,
+          password: req.query.password
+        }
+        db.collection("users")
+          .insertOne(newUser)
+          .then(doc => {
+            db.collection("user-identities")
+              .insertOne(newUserIdentity)
+              .then(uauth => res.status(200).json(doc))
+              .catch(err => res.status(400).json(err))
+          })
+          .error(err => res.status(400))
+      }
+      else {
+        res.status(400).json({error: "Missing either username or password"})
+      }
+   })
 
     app.get("/api/self", (req, res) => {
       const authHeader = req.headers["authorization"];
