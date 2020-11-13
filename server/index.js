@@ -105,7 +105,7 @@ MongoClient.connect(url, { useUnifiedTopology: true })
               .then(uauth => res.status(200).json(doc))
               .catch(err => res.status(400).json(err))
           })
-          .error(err => res.status(400))
+          .error(err => res.status(400).json(err))
       }
       else {
         res.status(400).json({error: "Missing either username or password"})
@@ -146,7 +146,6 @@ MongoClient.connect(url, { useUnifiedTopology: true })
           .then((doc) => res.status(200).json(doc))
           .catch((err) => res.status(404).json(err));
       } else {
-        console.log("AAAAAAAAAAAAA");
         return res.status(400).json({ error: "Please provide an image" });
       }
     });
